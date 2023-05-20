@@ -20,7 +20,6 @@ module.exports = {
         },
       },
       game_id: {
-        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: {
