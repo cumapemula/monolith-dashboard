@@ -1,48 +1,54 @@
-const { UserBiodata } = require('../models')
+const { UserBiodata } = require("../models");
 
-const getUserBiodataByID = (req, res) => {
-  UserBiodata.findAll({
-    where: {
-      user_id: req.params.id,
-    }
-  }).then((user) => {
+const getUserBiodataByID = async (req, res) => {
+  try {
+    const user = await UserBiodata.findAll({
+      where: {
+        user_id: req.params.id,
+      },
+    });
     const row = user.map((users) => {
       return {
-        'user id': users.user_id,
-        'first name': users.first_name,
-        'last name': users.last_name,
+        "user id": users.user_id,
+        "first name": users.first_name,
+        "last name": users.last_name,
         hobby: users.hobby,
       };
     });
-    const column = Object.keys(row[0] || {})
+    const column = Object.keys(row[0] || {});
     res.render("UserBiodata/UpdatePage", {
       column,
       row,
       req: req.params.id,
     });
-  });
-}
+  } catch (error) {
+    console.error(error);
+    res.render("500page");
+  }
+};
 
-const updateUserBiodata = (req, res) => {
-  UserBiodata.update(
-    {
-      first_name: req.body.first_name,
-      last_name: req.body.last_name,
-      hobby: req.body.hobby,
-    },
-    {
-      where: {
-        user_id: req.params.id,
+const updateUserBiodata = async (req, res) => {
+  try {
+    await UserBiodata.update(
+      {
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        hobby: req.body.hobby,
       },
-    }
-  )
-    .then(() => {
-      res.redirect("/dashboard/users");
-    })
-    .catch((error) => console.error(error));
-}
+      {
+        where: {
+          user_id: req.params.id,
+        },
+      }
+    );
+    res.redirect("/dashboard/users");
+  } catch (error) {
+    console.error(error);
+    res.render("500page");
+  }
+};
 
 module.exports = {
   getUserBiodataByID,
-  updateUserBiodata
-}
+  updateUserBiodata,
+};

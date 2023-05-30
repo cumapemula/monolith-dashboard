@@ -1,34 +1,39 @@
 const { Games } = require("../models");
 
-const getAllGames = (req, res) => {
-  Games.findAll({
-    order: [['id', 'ASC']]
-  }).then((game) => {
+const getAllGames = async (req, res) => {
+  try {
+    const games = await Games.findAll({
+      order: [["id", "ASC"]],
+    });
     const column = Object.keys(Games.getAttributes());
-    const row = game.map((games) => {
+    const row = games.map((game) => {
       return {
-        id: games.id,
-        name: games.name,
-        genre: games.genre,
+        id: game.id,
+        name: game.name,
+        genre: game.genre,
       };
     });
     res.render("Games/ListGames", {
       column,
       row,
     });
-  });
+  } catch (error) {
+    console.error(error);
+    res.render("500page");
+  }
 };
 
 const getCreateGames = (req, res) => {
-  res.render('Games/CreatePage')
-}
+  res.render("Games/CreatePage");
+};
 
-const getUpdateGames = (req, res) => {
-  Games.findAll({
-    where: {
-      id: req.params.id,
-    },
-  }).then((game) => {
+const getUpdateGames = async (req, res) => {
+  try {
+    const game = await Games.findAll({
+      where: {
+        id: req.params.id,
+      },
+    });
     const column = Object.keys(Games.getAttributes());
     const row = game.map((games) => {
       return {
@@ -42,15 +47,19 @@ const getUpdateGames = (req, res) => {
       row,
       req: req.params.id,
     });
-  });
+  } catch (error) {
+    console.error(error);
+    res.render("500page");
+  }
 };
 
-const getDeleteGames = (req, res) => {
-  Games.findAll({
-    where: {
-      id: req.params.id,
-    },
-  }).then((game) => {
+const getDeleteGames = async (req, res) => {
+  try {
+    const game = await Games.findAll({
+      where: {
+        id: req.params.id,
+      },
+    });
     const column = Object.keys(Games.getAttributes());
     const row = game.map((games) => {
       return {
@@ -64,45 +73,58 @@ const getDeleteGames = (req, res) => {
       row,
       req: req.params.id,
     });
-  });
+  } catch (error) {
+    console.error(error);
+    res.render("500page");
+  }
 };
 
-const createGames = (req, res) => {
-  Games.create({
-    name: req.body.name,
-    genre: req.body.genre,
-  }).then(() => {
-    res.redirect("/dashboard/games");
-  });
-};
-
-const updateGames = (req, res) => {
-  Games.update(
-    {
+const createGames = async (req, res) => {
+  try {
+    await Games.create({
       name: req.body.name,
       genre: req.body.genre,
-    },
-    {
+    });
+    res.redirect("/dashboard/games");
+  } catch (error) {
+    console.error(error);
+    res.render("500page");
+  }
+};
+
+const updateGames = async (req, res) => {
+  try {
+    await Games.update(
+      {
+        name: req.body.name,
+        genre: req.body.genre,
+      },
+      {
+        where: {
+          id: req.params.id,
+        },
+      }
+    );
+    res.redirect("/dashboard/games");
+  } catch (error) {
+    console.error(error);
+    res.render("500page");
+  }
+};
+
+const deleteGames = async (req, res) => {
+  try {
+    await Games.destroy({
       where: {
         id: req.params.id,
       },
-    }
-  ).then(() => {
+    });
     res.redirect("/dashboard/games");
-  });
+  } catch (error) {
+    console.error(error);
+    res.render("500page");
+  }
 };
-
-const deleteGames = (req, res) => {
-  Games.destroy({
-    where: {
-      id: req.params.id,
-    }
-  }).then(() =>{
-    res.redirect("/dashboard/games");
-  }).catch(err => {
-    console.log(err);
-  })
-}
 
 module.exports = {
   getAllGames,
@@ -111,5 +133,5 @@ module.exports = {
   getDeleteGames,
   createGames,
   updateGames,
-  deleteGames
+  deleteGames,
 };
