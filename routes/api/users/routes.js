@@ -1,11 +1,6 @@
 const usersApi = require('express').Router()
 const { Users, UserBiodata, UserHistory, Games } = require('../../../models')
 
-Users.hasOne(UserBiodata, { foreignKey: 'user_id', sourceKey: 'id'})
-Users.hasOne(UserHistory, { foreignKey: 'user_id', sourceKey: 'id'})
-UserHistory.hasMany(Games, { foreignKey: 'id', sourceKey: 'game_id'})
-
-
 // GET: /api/v1/users
 // Endpoint list users dengan role 'Player'
 usersApi.get('/users/account', async (req, res) => {

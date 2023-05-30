@@ -1,7 +1,7 @@
 const dashboardRouter = require('express').Router();
 const { Users } = require('../../models')
 
-dashboardRouter.get('/login', async (req, res) => {
+dashboardRouter.get('/login', (req, res) => {
   res.render('LoginPage')
 })
 
