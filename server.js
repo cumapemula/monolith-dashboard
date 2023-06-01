@@ -2,15 +2,15 @@ const express = require("express");
 const app = express();
 const port = 3000;
 const morgan = require("morgan");
-const gamesRouter = require("./routes/games/games");
-const usersBiodataRouter = require("./routes/users/userbiodata");
-const usersRouter = require("./routes/users/users");
-const userHistoryRouter = require("./routes/users/userhistory");
-const usersApi = require('./routes/api/users/routes');
-const gamesApi = require("./routes/api/games/routes");
-const userBiodataApi = require("./routes/api/userbiodata/routes");
-const userHistoryApi = require("./routes/api/userhistory/routes");
-const dashboardRouter = require("./routes/dashboard/login");
+const gamesRouter = require("./routes/app/games/router");
+const usersBiodataRouter = require("./routes/app/userbiodata/router");
+const usersRouter = require("./routes/app/users/router");
+const userHistoryRouter = require("./routes/app/userhistory/router");
+const usersApi = require('./routes/api/users/router');
+const gamesApi = require("./routes/api/games/router");
+const userBiodataApi = require("./routes/api/userbiodata/router");
+const userHistoryApi = require("./routes/api/userhistory/router");
+const dashboardRouter = require("./routes/app/dashboard/router");
 
 // Built-In Middleware
 app.use(express.static("public"));
@@ -22,7 +22,6 @@ app.use(morgan("dev"));
 
 // set view engine
 app.set("view engine", "ejs");
-app.set('')
 
 // Routing
 app.use('/dashboard', gamesRouter, usersBiodataRouter, usersRouter, userHistoryRouter, dashboardRouter);

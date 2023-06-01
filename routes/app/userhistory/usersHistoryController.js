@@ -1,4 +1,4 @@
-const { UserHistory, Users, Games } = require("../models");
+const { UserHistory, Users, Games } = require("../../../models");
 
 const getUserHistoryById = async (req, res) => {
   try {

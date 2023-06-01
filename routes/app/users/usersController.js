@@ -1,4 +1,4 @@
-const { Users, UserBiodata, UserHistory, Games } = require("../models");
+const { Users, UserBiodata, UserHistory, Games } = require("../../../models");
 
 const getAllUsers = async (req, res) => {
   try {

@@ -2,7 +2,7 @@ const usersBiodataRouter = require("express").Router();
 const {
   getUserBiodataByID,
   updateUserBiodata
-} = require('../../controller/usersBiodataController')
+} = require('./usersBiodataController')
 
 usersBiodataRouter.get("/users/:id/biodata", getUserBiodataByID);
 usersBiodataRouter.post("/users/:id/biodata", updateUserBiodata);

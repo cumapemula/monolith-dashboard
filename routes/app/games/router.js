@@ -1,5 +1,5 @@
 const gamesRouter = require('express').Router();
-const { getAllGames, createGames, updateGames, getUpdateGames, getDeleteGames, deleteGames, getCreateGames } = require('../../controller/gamesController');
+const { getAllGames, createGames, updateGames, getUpdateGames, getDeleteGames, deleteGames, getCreateGames } = require('./gamesController');
 
 gamesRouter.get("/games", getAllGames);
 gamesRouter.get("/games/create", getCreateGames);

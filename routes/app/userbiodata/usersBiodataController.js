@@ -1,4 +1,4 @@
-const { UserBiodata } = require("../models");
+const { UserBiodata } = require("../../../models");
 
 const getUserBiodataByID = async (req, res) => {
   try {

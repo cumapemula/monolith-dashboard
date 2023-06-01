@@ -8,7 +8,7 @@ const {
   createUser,
   updateUser,
   deleteUser,
-} = require("../../controller/usersController");
+} = require("./usersController");
 
 usersRouter.get("/users", getAllUsers);
 usersRouter.get("/users/posts", getUserCreate);
