@@ -51,6 +51,10 @@ const createGame = async (req, res) => {
     const created = await Games.create({
       name: req.body.name,
       genre: req.body.genre,
+      max_player: req.body.max_player,
+      win_score: req.body.win_score,
+      lose_score: req.body.lose_score,
+      draw_score: req.body.draw_score,
     });
     if (!created) {
       res.json({
@@ -76,6 +80,10 @@ const updateGame = async (req, res) => {
       {
         name: req.body.name,
         genre: req.body.genre,
+        max_player: req.body.max_player,
+        win_score: req.body.win_score,
+        lose_score: req.body.lose_score,
+        draw_score: req.body.draw_score,
       },
       {
         where: {

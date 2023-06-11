@@ -1,4 +1,8 @@
-const { Users, UserBiodata, UserHistory, Games } = require("../../../models");
+const { Users, UserBiodata, UserHistory, Games, Player } = require("../../../models");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
+const JWT_KEY = process.env.JWT_KEY;
 
 const getPlayers = async (req, res) => {
   try {
@@ -10,15 +14,15 @@ const getPlayers = async (req, res) => {
       include: [
         {
           model: UserBiodata,
-          as: 'bio',
+          as: "bio",
         },
         {
           model: UserHistory,
-          as: 'score',
+          as: "score",
           include: [
             {
               model: Games,
-              as: 'games'
+              as: "games",
             },
           ],
         },
@@ -73,13 +77,64 @@ const getPlayerByID = async (req, res) => {
   }
 };
 
+const getLogin = async (req, res) => {
+  try {
+    const aud = req.header("x-audience");
+    const username = req.body.username;
+    const password = req.body.password;
+
+    const user = await Users.findOne({
+      where: {
+        username
+      },
+    });
+
+    if (!user) {
+      res.json({
+        message: "failed",
+        result: null,
+        error: "invalid user/password",
+      });
+      return;
+    }
+
+    const isPasswordValid = bcrypt.compareSync(password, user.password);
+    if (!isPasswordValid) {
+      res.json({
+        message: "failed",
+        result: null,
+        error: "invalid user/password",
+      });
+      return;
+    }
+
+    const token = jwt.sign(
+      {
+        sub: String(user.id),
+        iss: "backend",
+        aud: aud || "frontend",
+      },
+      JWT_KEY,
+      {
+        expiresIn: "1h",
+      }
+    );
+
+    res.json({
+      message: "success",
+      result: {
+        token,
+      },
+      error: null,
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 const createPlayer = async (req, res) => {
   try {
-    const created = await Users.create({
-      username: req.body.username,
-      password: req.body.password,
-      role: "player",
-    });
+    const created = await Users.register(req.body);
 
     const createBio = await UserBiodata.create({
       user_id: created.id,
@@ -93,7 +148,7 @@ const createPlayer = async (req, res) => {
         message: "failed to create a new player",
         result: null,
       });
-      return
+      return;
     }
 
     res.json({
@@ -108,10 +163,12 @@ const createPlayer = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
+    const password = req.body.password;
+    const encryptedPassword = bcrypt.hashSync(password, 10);
     const updated = await Users.update(
       {
         username: req.body.username,
-        password: req.body.password,
+        password: encryptedPassword,
       },
       {
         where: {
@@ -140,6 +197,11 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   try {
+    await Player.destroy({
+      where: {
+        player_id: req.params.id,
+      },
+    });
     await UserHistory.destroy({
       where: {
         user_id: req.params.id,
@@ -179,7 +241,8 @@ const deleteUser = async (req, res) => {
 module.exports = {
   getPlayers,
   getPlayerByID,
+  getLogin,
   createPlayer,
   updateUser,
-  deleteUser
-}
+  deleteUser,
+};
