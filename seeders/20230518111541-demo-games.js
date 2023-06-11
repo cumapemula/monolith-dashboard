@@ -7,16 +7,12 @@ module.exports = {
       "games",
       [
         {
-          name: "valorant",
-          genre: "fps",
-        },
-        {
-          name: "grand theft auto 5",
-          genre: "adventure",
-        },
-        {
-          name: "sleeping dogs",
+          name: "rock paper scissors",
           genre: "action",
+          max_player: 2,
+          win_score: 50,
+          lose_score: -15,
+          draw_score: 20,
         },
       ],
       {}
