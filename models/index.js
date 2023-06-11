@@ -47,31 +47,4 @@ Object.keys(db).forEach((modelName) => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-const Users = require("./users")(sequelize, Sequelize.DataTypes);
-const Games = require("./games")(sequelize, Sequelize.DataTypes);
-const UserHistory = require("./userhistory")(sequelize, Sequelize.DataTypes);
-const UserBiodata = require("./userbiodata")(sequelize, Sequelize.DataTypes);
-
-UserHistory.hasMany(Games, {
-  as: "games",
-  foreignKey: "id",
-  sourceKey: "game_id",
-});
-Users.hasMany(UserHistory, {
-  as: "score",
-  foreignKey: "user_id",
-  sourceKey: "id",
-});
-Users.hasOne(UserBiodata, {
-  as: "bio",
-  foreignKey: "user_id",
-  sourceKey: "id",
-});
-
-module.exports = {
-  db,
-  Users,
-  Games,
-  UserHistory,
-  UserBiodata,
-};
+module.exports = db;

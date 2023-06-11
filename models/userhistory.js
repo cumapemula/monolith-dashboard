@@ -10,7 +10,11 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      this.hasMany(models.Games, {
+        as: 'games',
+        foreignKey: 'id',
+        sourceKey: 'game_id'
+      })
     }
   }
   UserHistory.init({
@@ -18,7 +22,8 @@ module.exports = (sequelize, DataTypes) => {
     game_id: DataTypes.INTEGER,
     win: DataTypes.INTEGER,
     lose: DataTypes.INTEGER,
-    draw: DataTypes.INTEGER
+    draw: DataTypes.INTEGER,
+    total_score: DataTypes.INTEGER,
   }, {
     sequelize,
     timestamps: false,
