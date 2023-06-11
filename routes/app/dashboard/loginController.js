@@ -1,31 +1,11 @@
-const { Users } = require("../../../models");
-
 const getLoginPage = (req, res) => {
-  res.render('LoginPage')
-}
-
-const getAdmin = async (req, res) => {
-  try {
-    const isAdmin = await Users.findOne({
-      where: {
-        username: req.body.username,
-        password: req.body.password,
-        role: "admin",
-      },
-    });
-    if (!isAdmin) {
-      res.redirect("/dashboard/login");
-      return;
-    }
-    res.redirect("/dashboard/users");
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-
+  res.render("LoginPage", {
+    layout: "_layouts/main-layout",
+    title: "Dashboard - Login Page",
+    style: "/styles/dashboard/login.css",
+  });
+};
 
 module.exports = {
-  getLoginPage,
-  getAdmin
-}
+  getLoginPage
+};

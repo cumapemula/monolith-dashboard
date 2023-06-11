@@ -1,4 +1,5 @@
 const usersRouter = require("express").Router();
+const { sessionAuthentication } = require("../../../middlewares/authentication");
 const {
   getAllUsers,
   getUserCreate,
@@ -10,13 +11,13 @@ const {
   deleteUser,
 } = require("./usersController");
 
-usersRouter.get("/users", getAllUsers);
-usersRouter.get("/users/posts", getUserCreate);
-usersRouter.get("/users/:id", getUserById);
-usersRouter.get("/users/:id/account", getUserAccountUpdate);
-usersRouter.get("/users/:id/delete", getUserAccountDelete);
-usersRouter.post("/users/posts", createUser);
-usersRouter.post("/users/:id", updateUser);
-usersRouter.post("/users/:id/delete", deleteUser);
+usersRouter.get("/users", sessionAuthentication, getAllUsers);
+usersRouter.get("/users/posts", sessionAuthentication, getUserCreate);
+usersRouter.get("/users/:id", sessionAuthentication, getUserById);
+usersRouter.get("/users/:id/account", sessionAuthentication, getUserAccountUpdate);
+usersRouter.get("/users/:id/delete", sessionAuthentication, getUserAccountDelete);
+usersRouter.post("/users/posts", sessionAuthentication, createUser);
+usersRouter.post("/users/:id", sessionAuthentication, updateUser);
+usersRouter.post("/users/:id/delete", sessionAuthentication, deleteUser);
 
 module.exports = usersRouter;

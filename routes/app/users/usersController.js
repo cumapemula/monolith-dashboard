@@ -1,4 +1,5 @@
-const { Users, UserBiodata, UserHistory, Games } = require("../../../models");
+const { Users, UserBiodata, UserHistory, Games, Player } = require("../../../models");
+const bcrypt = require("bcrypt");
 
 const getAllUsers = async (req, res) => {
   try {
@@ -17,7 +18,7 @@ const getAllUsers = async (req, res) => {
         {
           model: UserHistory,
           as: "score",
-          attributes: ["game_id", "win", "lose", "draw"],
+          attributes: ["game_id", "win", "lose", "draw", "total_score"],
           include: {
             model: Games,
             as: "games",
@@ -39,21 +40,28 @@ const getAllUsers = async (req, res) => {
         win: users?.score[0]?.win,
         lose: users?.score[0]?.lose,
         draw: users?.score[0]?.draw,
+        'total score': users?.score[0]?.total_score
       };
     });
     const column = Object.keys(row[0] || {});
     res.render("Users/ListUsers", {
       column,
       row,
+      layout: "_layouts/main-layout",
+      title: "Dashboard - Users",
+      style: "/styles/users/listusers.css",
     });
   } catch (error) {
     console.error(error);
-    res.render("500page");
   }
 };
 
 const getUserCreate = (req, res) => {
-  res.render("Users/CreatePage");
+  res.render("Users/CreatePage", {
+    layout: "_layouts/main-layout",
+    title: "Dashboard - Create New User",
+    style: "/styles/users/create.css",
+  });
 };
 
 const getUserById = async (req, res) => {
@@ -73,7 +81,7 @@ const getUserById = async (req, res) => {
         {
           model: UserHistory,
           as: "score",
-          attributes: ["game_id", "win", "lose", "draw"],
+          attributes: ["game_id", "win", "lose", "draw", "total_score"],
           include: [
             {
               model: Games,
@@ -97,6 +105,7 @@ const getUserById = async (req, res) => {
         win: user.score[0]?.win,
         lose: user.score[0]?.lose,
         draw: user.score[0]?.draw,
+        'total score': user.score[0]?.total_score
       };
     });
     const column = Object.keys(row[0]);
@@ -104,10 +113,12 @@ const getUserById = async (req, res) => {
       column,
       row,
       req: req.params.id,
+      layout: "_layouts/main-layout",
+      title: "Dashboard - Detail User",
+      style: "/styles/users/detail.css",
     });
   } catch (error) {
     console.error(error);
-    res.render("500page");
   }
 };
 
@@ -132,10 +143,12 @@ const getUserAccountUpdate = async (req, res) => {
       column,
       row,
       req: req.params.id,
+      layout: "_layouts/main-layout",
+      title: "Dashboard - Update Account",
+      style: "/styles/users/update.css",
     });
   } catch (error) {
     console.error(error);
-    res.render("500page");
   }
 };
 
@@ -187,19 +200,18 @@ const getUserAccountDelete = async (req, res) => {
       column,
       row,
       req: req.params.id,
+      layout: "_layouts/main-layout",
+      title: "Dashboard - Delete User",
+      style: "/styles/users/delete.css",
     });
   } catch (error) {
     console.error(error);
-    res.render("500page");
   }
 };
 
 const createUser = async (req, res) => {
   try {
-    const users = await Users.create({
-      username: req.body.username,
-      password: req.body.password,
-    });
+    const users = await Users.register(req.body);
     await UserBiodata.create({
       user_id: users.id,
       first_name: req.body.first_name,
@@ -208,9 +220,8 @@ const createUser = async (req, res) => {
     });
     await UserHistory.create({
       user_id: users.id,
-    }).then(() => {
-      res.redirect("/dashboard/users");
     });
+    res.redirect("/dashboard/users");
   } catch (error) {
     console.error(error);
     res.render("500page");
@@ -219,10 +230,12 @@ const createUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
+    const password = req.body.password;
+    const encryptedPassword = bcrypt.hashSync(password, 10);
     await Users.update(
       {
         username: req.body.username,
-        password: req.body.password,
+        password: encryptedPassword,
       },
       {
         where: {
@@ -233,12 +246,16 @@ const updateUser = async (req, res) => {
     res.redirect("/dashboard/users");
   } catch (error) {
     console.error(error);
-    res.render("500page");
   }
 };
 
 const deleteUser = async (req, res) => {
   try {
+    await Player.destroy({
+      where: {
+        player_id: req.params.id
+      }
+    })
     await UserHistory.destroy({
       where: {
         user_id: req.params.id,
@@ -257,7 +274,6 @@ const deleteUser = async (req, res) => {
     res.redirect("/dashboard/users");
   } catch (error) {
     console.error(error);
-    res.render("500page");
   }
 };
 

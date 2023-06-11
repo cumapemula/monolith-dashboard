@@ -20,6 +20,9 @@ const getUserBiodataByID = async (req, res) => {
       column,
       row,
       req: req.params.id,
+      layout: "_layouts/main-layout",
+      title: "Dashboard - Update Biodata",
+      style: "/styles/userbiodata/update.css",
     });
   } catch (error) {
     console.error(error);

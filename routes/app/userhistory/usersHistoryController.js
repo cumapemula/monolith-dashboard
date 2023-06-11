@@ -12,7 +12,7 @@ const getUserHistoryById = async (req, res) => {
         {
           model: UserHistory,
           as: "score",
-          attributes: ["game_id", "win", "lose", "draw"],
+          attributes: ["game_id", "win", "lose", "draw", "total_score"],
           include: [
             {
               model: Games,
@@ -36,6 +36,7 @@ const getUserHistoryById = async (req, res) => {
         win: users.score[0]?.win,
         lose: users.score[0]?.lose,
         draw: users.score[0]?.draw,
+        'total score': users.score[0]?.total_score
       };
     });
     const column = Object.keys(row[0]);
@@ -44,21 +45,31 @@ const getUserHistoryById = async (req, res) => {
       column,
       games,
       req: req.params.id,
+      layout: "_layouts/main-layout",
+      title: "Dashboard - Update History",
+      style: "/styles/userhistory/update.css",
     });
   } catch (error) {
     console.error(error);
-    res.render("500page");
   }
 };
 
 const updateScore = async (req, res) => {
   try {
+    
+    const game = await Games.findOne({
+      where: {
+        name: 'rock paper scissors',
+      }
+    });
+
     await UserHistory.update(
       {
         game_id: req.body.game_id,
         win: req.body.win,
         lose: req.body.lose,
         draw: req.body.draw,
+        total_score: (game.win_score * +req.body.win) + (game.lose_score * +req.body.lose) + (game.draw_score * +req.body.draw)
       },
       {
         where: {
@@ -69,7 +80,6 @@ const updateScore = async (req, res) => {
     res.redirect("/dashboard/users");
   } catch (error) {
     console.error(error);
-    res.render("500page");
   }
 };
 
