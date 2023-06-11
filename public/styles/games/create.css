@@ -153,7 +153,7 @@ nav .nav-link {
   color: var(--color-green);
 }
 .container-form {
-  transform: translateY(400px);
+  transform: translateY(200px);
 }
 .form-field {
   width: 500px;
